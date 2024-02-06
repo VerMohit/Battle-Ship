@@ -1,0 +1,139 @@
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* END RESET */
+
+:root {
+    --sqr-size: 50px;
+    --no_cols: 10;
+    --no_rows: 10;
+}
+
+.main {
+    padding-inline: 10rem;
+}
+
+.game-info {
+    background-color: yellow;
+}
+
+/* Board Setup */
+.game-container {
+    background-color: bisque;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.boardTitle {
+    font-weight: 900;
+    text-align: center;
+    padding: 0.5rem 0;
+    font-size: 2rem;
+}
+
+.gameBoard {
+    display: grid;
+    grid-template-columns: repeat(var(--no_cols), var(--sqr-size));
+    grid-template-rows: repeat(var(--no_rows), var(--sqr-size));
+    width: min-content;
+}
+
+.circle {
+    width: calc(var(--sqr-size) / 3);
+    height: calc(var(--sqr-size) / 3);
+    border: 1px solid black;
+    border-radius: 100%;
+}
+
+.cell {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* END of Board Setup */
+
+/* Setup the options container */
+.options {
+    background-color: azure;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 2rem;
+    padding-top: 2rem;
+}
+
+/* Ship Setup */
+
+.ships-container {
+    background-color: aquamarine;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    /* width: calc(var(--sqr-size) * var(--no_cols)); */
+}
+
+.ships-container div {
+    border-radius: 20px;
+    height: 30px;
+}
+
+.carrier {
+    background-color: black;
+}
+
+.battleship {
+    background-color: red;
+}
+
+.destroyer {
+    background-color: green;
+}
+
+.submarine {
+    background-color: yellow;
+}
+
+.cruiser {
+    background-color: blue;
+}
+
+.view-carrier {
+    width: calc(3 * var(--sqr-size)) ;
+    
+}
+
+.view-battleship {
+    width: calc(2 * var(--sqr-size)) ;
+}
+
+.view-destroyer, .view-submarine {
+    width: calc(1.5 * var(--sqr-size)) ;
+}
+
+.view-cruiser {
+    width: calc(1 * var(--sqr-size)) ;
+}
+
+
+
+/* Button setup */
+.btn-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+button {
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}

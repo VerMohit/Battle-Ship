@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Ship</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="logic.js"></script>
+
+    <script>
+        function allowDrop(ev) {
+          ev.preventDefault();
+        }
+        
+        function drag(ev) {
+          ev.dataTransfer.setData("text", ev.target.id);
+          ev.dataTransfer.dropEffect = "copy";
+        }
+        
+        function drop(ev) {
+          ev.preventDefault();
+          var data = ev.dataTransfer.getData("text");
+          ev.target.appendChild(document.getElementById(data));
+        }
+        </script>
+</head>
+<body>
+
+    <div class="main">
+        <div class="game-info">
+            <p>Turn: <span class="turn"></span></p>
+            <p>Info: <span class="info"></span></p>
+        </div>
+    
+        <div id="game-container" class="game-container"></div>
+        
+        <div class="options">
+            <div class="ships-container">
+                <div class="view-carrier carrier" draggable="true"></div>
+                <div class="view-battleship battleship" draggable="true"></div>
+                <div class="view-destroyer destroyer" draggable="true" ondragstart="drag(event)"></div>
+                <div class="view-submarine submarine" draggable="true"></div>
+                <div class="view-cruiser cruiser" draggable="true"></div>        
+            </div>
+
+            <div class="btn-container">
+                <button class="rotate">Rotate Ship</button>
+                <button class="start">Start</button>
+                <button class="start">Restart</button>                
+            </div>
+        </div>
+        
+
+
+    </div>
+
+
+
+
+
+</body>
+</html>
