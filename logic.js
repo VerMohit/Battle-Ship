@@ -70,8 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const submarine = new Ship('submarine', 3);
     const cruiser = new Ship('cruiser', 2);
 
-    // const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];
-    const ship_Arr = [carrier, battleship];
+    const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];
 
     
     // Logic for the computer to randomize ship placement
@@ -111,53 +110,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         console.log('first cell ' + ship_Start)
-        console.log('last cell ' + last_Ship_Cell)
-
-
-        
-        console.log(valid_Move)
+        console.log('last cell ' + last_Ship_Cell)        
+        console.log('valid move? ' + valid_Move)
 
         // Prevent ships from overlapping
-        // let cells_Covered;
-        // let cell_Not_Taken = true;
-        // for(let ii = 0; ii < shipObj.length; ii++) {
-        //     cells_Covered = is_Horizontal ? 
-        //                                 compBoardCells[valid_Start + ii] : 
-        //                                 compBoardCells[valid_Start + (ii * boardCols)];
-        //     // cell_Not_Taken = cells_Covered.classList.contains('taken') ? false : true;
-        //     if(cells_Covered.classList.contains('taken')) {
-        //         cell_Not_Taken = false;
-        //         break;
-        //     }
-        // }
-
-
-        // Place the ships on computer board and include className 'taken'
-        let cells_Covered;
-        if (valid_Move ) {
-            for(let ii = 0; ii < shipObj.length; ii++) {
-                cells_Covered = is_Horizontal ? 
-                                            compBoardCells[valid_Start + ii] : 
-                                            compBoardCells[valid_Start + (ii * boardCols)];
-                
-                // Prevent ships from overlapping
-                // if(!cells_Covered.className.includes('taken')) {
-                    cells_Covered.classList.add(shipObj.name, 'taken');
-                // }
-                // else {
-                //     compPlaceShips(shipObj);
-                // }
-
-
-                
+        let cells_Covered = [];
+        let cell_Not_Taken = true;
+        for(let ii = 0; ii < shipObj.length; ii++) {
+            let cell = is_Horizontal ? 
+                                        compBoardCells[valid_Start + ii] : 
+                                        compBoardCells[valid_Start + (ii * boardCols)];
+            if(cell.classList.contains('taken')) {
+                cell_Not_Taken = false;
+                break;
             }
-            // console.log('last cell ' + cells_Covered.className.includes('taken'))
-            return;
+            else{
+                cells_Covered.push(cell);
+            }
         }
-        else {
+
+        // If move is not valid or any cell is already taken, recall function
+        if(!valid_Move || !cell_Not_Taken) {
             compPlaceShips(shipObj);
         }
-
+        else {
+            // Update class name for each covered cell in the array
+            cells_Covered.forEach(cell => cell.classList.add(shipObj.name, 'taken'));
+        }
         
     
     }
