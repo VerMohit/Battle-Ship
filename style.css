@@ -86,7 +86,7 @@
 }
 
 .carrier {
-    background-color: black;
+    background-color: royalblue;
 }
 
 .battleship {
@@ -102,7 +102,7 @@
 }
 
 .cruiser {
-    background-color: blue;
+    background-color: grey;
 }
 
 .view-carrier {

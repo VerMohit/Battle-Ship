@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ships_container_Arr = Array.from(document.querySelectorAll('.ships-container div'));
     console.log(ships_container_Arr);
     
-    // Functions 
+    // --------- Functions ---------
     function createBoard(user) {
         /* Function used to create new player and computer boards */
 
@@ -44,37 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function rotate(){
         /* Function rotates the ships in the .ships-container */
         ship_Angle = ship_Angle === 0 ? 90 : 0;
-        ships_container_Arr.forEach(shipPreview => 
-            shipPreview.style.transform=`rotate(${ship_Angle}deg`);
+        ships_container_Arr.forEach((shipPreview) =>  
+            shipPreview.style.transform=`rotate(${ship_Angle}deg)`
+        );
     }
 
-
-    // Create board
-    createBoard('Player');
-    createBoard('Computer');    
-
-    // Button logic for flipping ships in the container
-    rotate_Btn.addEventListener('click', rotate);
-
-    // Create ship objects to be placed on board
-    class Ship {
-        constructor(name, length) {
-            this.name = name;
-            this.length = length;
-        }
-    }
-
-    const carrier = new Ship('carrier', 5);
-    const battleship = new Ship('battleship', 4);
-    const destroyer = new Ship('destroyer', 3);
-    const submarine = new Ship('submarine', 3);
-    const cruiser = new Ship('cruiser', 2);
-
-    const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];
-
-    
-    // Logic for the computer to randomize ship placement
-    function compPlaceShips(shipObj) {
+    function placeComputerShips(shipObj) {
         /* Function randomly places ships on the computer board at start of game */
 
         // Get nodeList of all the children contained in the element with id=Computer
@@ -131,18 +106,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // If move is not valid or any cell is already taken, recall function
         if(!valid_Move || !cell_Not_Taken) {
-            compPlaceShips(shipObj);
+            placeComputerShips(shipObj);
         }
         else {
             // Update class name for each covered cell in the array
-            cells_Covered.forEach(cell => cell.classList.add(shipObj.name, 'taken'));
-        }
-        
-    
+            cells_Covered.forEach((cell) => {
+                cell.classList.add(shipObj.name, 'taken');                            
+            });
+        }       
     }
 
-    // Initialize computer ship piece placement
-    ship_Arr.forEach(shipObj => compPlaceShips(shipObj));
+
+
+
+    // --------- Game Setup --------- 
+
+    // Create board
+    createBoard('Player');
+    createBoard('Computer');    
+
+    // Button logic for flipping ships in the container
+    rotate_Btn.addEventListener('click', rotate);
+
+    // Create ship objects to be placed on board
+    class Ship {
+        constructor(name, length) {
+            this.name = name;
+            this.length = length;
+        }
+    }
+
+    const carrier = new Ship('carrier', 5);
+    const battleship = new Ship('battleship', 4);
+    const destroyer = new Ship('destroyer', 3);
+    const submarine = new Ship('submarine', 3);
+    const cruiser = new Ship('cruiser', 2);
+
+    const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];   
+
+    // Initialize randomized computer ship placement
+    ship_Arr.forEach((shipObj) => placeComputerShips(shipObj));
+
+
+
+
 
 
 
