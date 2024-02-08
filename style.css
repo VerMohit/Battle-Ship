@@ -57,6 +57,11 @@
     justify-content: center;
     align-items: center;
 }
+
+.cell:hover {
+    border-color: yellow;
+}
+
 /* END of Board Setup */
 
 /* Setup the options container */
