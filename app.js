@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Defining constant parameters for the game
     let ship_Angle = 0; 
     let player_Dragged_Ship;  // Keep track of which ship the Player drags
-    let isShip_Dropped;          // Boolean to check and see if ship is dropped onto Player Board
+    let ship_Not_Dropped;          // Boolean to check and see if ship is dropped onto Player Board
+    // let cell_Not_Taken = true;   // Boolean checks to see if a cell has been taken or
     const boardCols = 10;
     const boardRows = 10;
     const boardSquares = boardCols * boardRows;
@@ -73,76 +74,51 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 
-    // function place_Ships_On_Board(shipObj) {
-    //     /* Function randomly places ships on the computer board at start of game */
-
-    //     // Get nodeList of all the children contained in the element with id=Computer
-    //     const compBoardCells = document.querySelector('#Computer').children;
-        
-
-    //     // Get a random start position for the ships (between 0 and 99, inclusive)
-    //     let ship_Start = Math.floor(Math.random() * 100);
-
-    //     // Randomly determine if the position of the ship will be horizontal (ie. true)
-    //     let is_Horizontal = Math.random() <= 0.5;
-
-    //     // Determine valid positions for each shipObj based on its orientation and allowable dimensions
-    //     let valid_Start = ship_Start;        // Define initial start lcoation of shipObj
-    //     let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
-    //     let valid_Move = true;              // Identifies if the ship placement was valid
-        
-    //     if(is_Horizontal) {
-    //         // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
-    //         valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
-    //         // Find the last cell occupied by the shipObj
-    //         last_Ship_Cell = compBoardCells[valid_Start + shipObj.length - 1].id;
-    //         // Ensure that column of the shipObj's start position is less than column of end position
-    //         if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
-    //             valid_Move = false;
-    //         }
-    //     }
-    //     else {
-    //         // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
-    //         valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
-    //         // Find the last cell occupied by the shipObj
-    //         last_Ship_Cell = compBoardCells[valid_Start + (shipObj.length - 1) * boardCols].id;
-    //     }
-
-    //     // console.log(shipObj);
-    //     // console.log('first cell ' + ship_Start)
-    //     // console.log('last cell ' + last_Ship_Cell)        
-    //     // console.log('valid move? ' + valid_Move)
-
-    //     // Prevent ships from overlapping
-    //     let cells_Covered = [];
-    //     let cell_Not_Taken = true;
-    //     for(let ii = 0; ii < shipObj.length; ii++) {
-    //         let cell = is_Horizontal ? 
-    //                                     compBoardCells[valid_Start + ii] : 
-    //                                     compBoardCells[valid_Start + (ii * boardCols)];
-    //         if(cell.classList.contains('taken')) {
-    //             cell_Not_Taken = false;
-    //             break;
-    //         }
-    //         else{
-    //             cells_Covered.push(cell);
-    //         }
-    //     }
-
-    //     // If move is not valid or any cell is already taken, recall function
-    //     if(!valid_Move || !cell_Not_Taken) {
-    //         place_Ships_On_Board(shipObj);
-    //     }
-    //     else {
-    //         // Update class name for each covered cell in the array
-    //         cells_Covered.forEach((cell) => {
-    //             cell.classList.add(shipObj.name, 'taken');                            
-    //         });
-    //     }       
-    // }
-
-
     // ----------------------------------------------------------------------------
+
+    function check_Cells_Taken(is_Horizontal, valid_Start, board_Cells, shipObj) {
+        let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
+        let valid_Move = true;               // Identifies if the ship placement was valid
+        
+        if(is_Horizontal) {
+            // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
+            valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
+
+            // Find the last cell occupied by the shipObj
+            last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
+
+            // Ensure that column of the shipObj's start position is less than column of end position (ensures they're on same row)
+            if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
+                valid_Move = false;
+            }
+        }
+        else {
+            // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
+            valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
+            // Find the last cell occupied by the shipObj
+            last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
+        }
+
+        // Prevent ships from overlapping
+        let cells_Covered = [];
+        let cell_Not_Taken = true;
+        for(let ii = 0; ii < shipObj.length; ii++) {
+            let cell = is_Horizontal ? 
+                                        board_Cells[valid_Start + ii] : 
+                                        board_Cells[valid_Start + (ii * boardCols)];
+            if(cell.classList.contains('taken')) {
+                cell_Not_Taken = false;
+                break;
+            }
+            else{
+                cells_Covered.push(cell);
+            }
+        }
+
+        return [valid_Move, cell_Not_Taken, cells_Covered]
+    }
+
+
 
 
     function place_Ships_On_Board(user_Board, shipObj, start_Loc) {
@@ -169,48 +145,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Determine valid positions for each shipObj based on its orientation and allowable dimensions
         let valid_Start = start_Cell;        // Define valid initial start lcoation of shipObj
-        let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
-        let valid_Move = true;               // Identifies if the ship placement was valid
+
+
+
+
+        // let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
+        // let valid_Move = true;               // Identifies if the ship placement was valid
         
-        if(is_Horizontal) {
-            // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
-            valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
+        // if(is_Horizontal) {
+        //     // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
+        //     valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
 
-            // Find the last cell occupied by the shipObj
-            last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
+        //     // Find the last cell occupied by the shipObj
+        //     last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
 
-            // Ensure that column of the shipObj's start position is less than column of end position (ensures they're on same row)
-            if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
-                valid_Move = false;
-            }
-        }
-        else {
-            // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
-            valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
-            // Find the last cell occupied by the shipObj
-            last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
-        }
+        //     // Ensure that column of the shipObj's start position is less than column of end position (ensures they're on same row)
+        //     if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
+        //         valid_Move = false;
+        //     }
+        // }
+        // else {
+        //     // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
+        //     valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
+        //     // Find the last cell occupied by the shipObj
+        //     last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
+        // }
 
-        // console.log(shipObj);
-        // console.log('first cell ' + ship_Start)
-        // console.log('last cell ' + last_Ship_Cell)        
-        // console.log('valid move? ' + valid_Move)
+        // // console.log(shipObj);
+        // // console.log('first cell ' + ship_Start)
+        // // console.log('last cell ' + last_Ship_Cell)        
+        // // console.log('valid move? ' + valid_Move)
 
-        // Prevent ships from overlapping
-        let cells_Covered = [];
-        let cell_Not_Taken = true;
-        for(let ii = 0; ii < shipObj.length; ii++) {
-            let cell = is_Horizontal ? 
-                                        board_Cells[valid_Start + ii] : 
-                                        board_Cells[valid_Start + (ii * boardCols)];
-            if(cell.classList.contains('taken')) {
-                cell_Not_Taken = false;
-                break;
-            }
-            else{
-                cells_Covered.push(cell);
-            }
-        }
+        // // Prevent ships from overlapping
+        // let cells_Covered = [];
+        // let cell_Not_Taken = true;
+        // for(let ii = 0; ii < shipObj.length; ii++) {
+        //     let cell = is_Horizontal ? 
+        //                                 board_Cells[valid_Start + ii] : 
+        //                                 board_Cells[valid_Start + (ii * boardCols)];
+        //     if(cell.classList.contains('taken')) {
+        //         cell_Not_Taken = false;
+        //         break;
+        //     }
+        //     else{
+        //         cells_Covered.push(cell);
+        //     }
+        // }
+
+        [valid_Move, cell_Not_Taken, cells_Covered] = check_Cells_Taken(is_Horizontal, valid_Start, board_Cells, shipObj)
 
         // If move is not valid or any cell is already taken, recall function
         if(!valid_Move || !cell_Not_Taken) {
@@ -218,8 +200,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 place_Ships_On_Board(user_Board, shipObj, undefined);
             }
             if(user_Board === "Player") {
-                // isShip_Dropped = true;
-                isShip_Dropped = false;
+                ship_Not_Dropped = true;
+                // ship_Not_Dropped = false;
             }
             
         }
@@ -280,15 +262,21 @@ document.addEventListener('DOMContentLoaded', function() {
     rotate_Btn.addEventListener('click', rotate_Ship);
 
 
+    // -----------------------
+    
+
+
     // Logic for allowing players to drag ships and place them on their board   
     function onDragStart(event) {
         /* Function executed when user starts dragging ship */
 
         // Store information about which ship the player is dragging
         player_Dragged_Ship = event.target;
+        console.log(player_Dragged_Ship);
 
-        // isShip_Dropped = false;
-        isShip_Dropped = true;
+        ship_Not_Dropped = false;
+        // ship_Not_Dropped = true;
+        cell_Not_Taken = false;
     }
 
     function onDragOver(event) {
@@ -297,6 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Override browser default behaviour for elements to allow dropping
         event.preventDefault();
     }
+    
 
     function onDrop(event) {
         /* Target cell on which the ships will be placed */ 
@@ -309,23 +298,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check to see if any ships are currently occupying cells on Player board
         let is_Overlapping = false;
+        const board_Cells = Array.from(document.querySelector('#Player').children);
+
+        [valid_Move, cell_Not_Taken, cells_Covered] = check_Cells_Taken(ship_Angle === 0, player_Start_Loc, board_Cells, shipObj);
+        console.log(cell_Not_Taken);
         
+        if(!valid_Move || !cell_Not_Taken) {
+            jSuites.notification({
+                error: 1,
+                name: 'Error message',
+                message: 'Ships cannot overlap',
+            })
+        }
 
 
-        // player_Board_Cells.forEach(cell => {
-        //     cell.classList.remove(shipObj.name, 'taken');
-        // });
+
+
+        player_Board_Cells.forEach(cell => {
+            cell.classList.remove(shipObj.name, 'taken');
+        });
         
 
         // Player can now place their ships
         place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
         
         // Once the ship has been dropped onto board cell, remove it from the DOM
-        if (isShip_Dropped) {
+        if (!ship_Not_Dropped) {
             player_Dragged_Ship.remove();
         }
-
-
     }
 
     const player_Board_Cells = Array.from(document.querySelector('#Player').children);
