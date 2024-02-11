@@ -90,23 +90,23 @@
     height: 30px;
 }
 
-.carrier {
+.carrier, .hover-carrier {
     background-color: royalblue;
 }
 
-.battleship {
+.battleship, .hover-battleship {
     background-color: red;
 }
 
-.destroyer {
+.destroyer, .hover-destroyer {
     background-color: green;
 }
 
-.submarine {
+.submarine, .hover-submarine {
     background-color: yellow;
 }
 
-.cruiser {
+.cruiser, .hover-cruiser {
     background-color: grey;
 }
 
@@ -141,4 +141,19 @@ button {
     font-size: 1.5rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
+}
+
+/* This is for when the ship hover's over the player board */
+/* .hover {
+    background-color: grey;
+} */
+
+/* Boom in vid */
+.hit {
+    background-color: red;
+}
+
+/* empty in vid */
+.miss {
+    background-color: grey;
 }
