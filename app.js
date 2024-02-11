@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     // Defining constant parameters for the game
-    let ship_Angle = 0; 
+    let ship_Angle = 0;          // Tracks the orientation of the ship (0 = horizontal, 90 = vertical)
     let player_Dragged_Ship;  // Keep track of which ship the Player drags
-    let ship_Not_Dropped;          // Boolean to check and see if ship is dropped onto Player Board
-    // let cell_Not_Taken = true;   // Boolean checks to see if a cell has been taken or
+    let isShip_Dropped;          // Boolean to check and see if ship is dropped onto Player Board
     const boardCols = 10;
     const boardRows = 10;
     const boardSquares = boardCols * boardRows;
@@ -44,16 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         game_Container.appendChild(gameBoardCont);
     }
 
-
-
-    // function rotate(){
-    //     /* Function rotates the ships in the .ships-container */
-    //     ship_Angle = ship_Angle === 0 ? 90 : 0;
-    //     ships_container_Arr.forEach((shipPreview) =>  
-    //         shipPreview.style.transform=`rotate(${ship_Angle}deg)`
-    //     );
-    // }
-
     function create_Ship_Previews(shipObj, index) {
         /* Function dynamically creates previews of the ships */
         const ship = document.createElement('div');
@@ -74,58 +63,59 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 
-    // ----------------------------------------------------------------------------
+    function check_Valid_Move(start_Cell, shipObj, board_Cells, is_Horizontal) {
+        /* This function checks if the ship placement is valid or not */
 
-    function check_Cells_Taken(is_Horizontal, valid_Start, board_Cells, shipObj) {
-        let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
-        let valid_Move = true;               // Identifies if the ship placement was valid
-        
-        if(is_Horizontal) {
-            // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
-            valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
+         // Determine valid positions for each shipObj based on its orientation and allowable dimensions
+         let valid_Start = start_Cell;        // Define valid initial start lcoation of shipObj
+         let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
+         let valid_Move = true;              // Identifies if the ship placement was valid
+         
+         if(is_Horizontal) {
+             // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
+             valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
 
-            // Find the last cell occupied by the shipObj
-            last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
+             // Find the last cell occupied by the shipObj 
+            //  console.log(board_Cells[valid_Start + shipObj.length])
+             last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
+             // Ensure that column of the shipObj's start position is less than column of end position
+             if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
+                 valid_Move = false;
+             }
+         }
+         else {
+             // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
+             valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
+             // Find the last cell occupied by the shipObj
+             last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
+         }
+ 
+         // Prevent ships from overlapping
+         let cells_Covered = [];
+         let cell_Not_Taken = true;
+         for(let ii = 0; ii < shipObj.length; ii++) {
+             let cell = is_Horizontal ? 
+                                         board_Cells[valid_Start + ii] : 
+                                         board_Cells[valid_Start + (ii * boardCols)];
+             if(cell.classList.contains('taken')) {
+                 cell_Not_Taken = false;
+                 break;
+             }
+             else{
+                 cells_Covered.push(cell);
+             }
+         }
 
-            // Ensure that column of the shipObj's start position is less than column of end position (ensures they're on same row)
-            if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
-                valid_Move = false;
-            }
-        }
-        else {
-            // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
-            valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
-            // Find the last cell occupied by the shipObj
-            last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
-        }
-
-        // Prevent ships from overlapping
-        let cells_Covered = [];
-        let cell_Not_Taken = true;
-        for(let ii = 0; ii < shipObj.length; ii++) {
-            let cell = is_Horizontal ? 
-                                        board_Cells[valid_Start + ii] : 
-                                        board_Cells[valid_Start + (ii * boardCols)];
-            if(cell.classList.contains('taken')) {
-                cell_Not_Taken = false;
-                break;
-            }
-            else{
-                cells_Covered.push(cell);
-            }
-        }
-
-        return [valid_Move, cell_Not_Taken, cells_Covered]
+         return [cells_Covered, valid_Move, cell_Not_Taken];
     }
-
-
-
-
+  
     function place_Ships_On_Board(user_Board, shipObj, start_Loc) {
         /* Function randomly places ships on the computer board and provides logic to ensure the player places ships in valid positions */
 
         // Get nodeList of all the children contained in the element with id=Computer
         const board_Cells = Array.from(document.querySelector('#' + user_Board).children);
+        // console.log(board_Cells);
+
         
         // DetRandomly determine if the position of the ship will be horizontal (ie. true)
         let is_Horizontal;
@@ -143,56 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Specify the start position of the shipObj
         let start_Cell = start_Loc >= 0 ? start_Loc : random_Ship_Start;
 
-        // Determine valid positions for each shipObj based on its orientation and allowable dimensions
-        let valid_Start = start_Cell;        // Define valid initial start lcoation of shipObj
-
-
-
-
-        // let last_Ship_Cell;                  // Find the last cell occupied by the shipObj
-        // let valid_Move = true;               // Identifies if the ship placement was valid
-        
-        // if(is_Horizontal) {
-        //     // Guarentees that the shipObj starting position doesn't exceed last cell (ie. cell with id=99)
-        //     valid_Start = valid_Start > boardSquares - shipObj.length ? boardSquares - shipObj.length : valid_Start;
-
-        //     // Find the last cell occupied by the shipObj
-        //     last_Ship_Cell = board_Cells[valid_Start + shipObj.length - 1].id;
-
-        //     // Ensure that column of the shipObj's start position is less than column of end position (ensures they're on same row)
-        //     if(valid_Start % boardCols > last_Ship_Cell % boardCols) {
-        //         valid_Move = false;
-        //     }
-        // }
-        // else {
-        //     // Guarentees we never overflow vertically at all (ie. we don't go below the grid)
-        //     valid_Start = valid_Start > boardSquares - (shipObj.length * boardCols) ? valid_Start - (shipObj.length * boardCols) + boardCols : valid_Start;
-        //     // Find the last cell occupied by the shipObj
-        //     last_Ship_Cell = board_Cells[valid_Start + (shipObj.length - 1) * boardCols].id;
-        // }
-
-        // // console.log(shipObj);
-        // // console.log('first cell ' + ship_Start)
-        // // console.log('last cell ' + last_Ship_Cell)        
-        // // console.log('valid move? ' + valid_Move)
-
-        // // Prevent ships from overlapping
-        // let cells_Covered = [];
-        // let cell_Not_Taken = true;
-        // for(let ii = 0; ii < shipObj.length; ii++) {
-        //     let cell = is_Horizontal ? 
-        //                                 board_Cells[valid_Start + ii] : 
-        //                                 board_Cells[valid_Start + (ii * boardCols)];
-        //     if(cell.classList.contains('taken')) {
-        //         cell_Not_Taken = false;
-        //         break;
-        //     }
-        //     else{
-        //         cells_Covered.push(cell);
-        //     }
-        // }
-
-        [valid_Move, cell_Not_Taken, cells_Covered] = check_Cells_Taken(is_Horizontal, valid_Start, board_Cells, shipObj)
+        // Check the validity of the ship placement
+        const [cells_Covered, valid_Move, cell_Not_Taken] = check_Valid_Move(start_Cell, shipObj, board_Cells, is_Horizontal);
 
         // If move is not valid or any cell is already taken, recall function
         if(!valid_Move || !cell_Not_Taken) {
@@ -200,8 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 place_Ships_On_Board(user_Board, shipObj, undefined);
             }
             if(user_Board === "Player") {
-                ship_Not_Dropped = true;
-                // ship_Not_Dropped = false;
+                isShip_Dropped = true;
             }
             
         }
@@ -215,19 +156,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+    function highlight_Ship_Placement(start_Cell, shipObj) {
+        /* Function will highlight the cell on player's board when ship is being placed via drag */
 
+        // Check if horizontal
+        let is_Horizontal = ship_Angle === 0;
 
+        // Check validity of the ship placement on player's board
+        const [cells_Covered, valid_Move, cell_Not_Taken] = check_Valid_Move(start_Cell, shipObj, player_Board_Cells, is_Horizontal);
 
-
-
-
-
+        // If ship placement is valid and cells aren't taken, highlight cells
+        if(valid_Move && cell_Not_Taken) {
+            cells_Covered.forEach(cell => {
+                cell.classList.add('hover-'+shipObj.name);
+                // Remove the class .hover after x miliseconds
+                setTimeout(() => cell.classList.remove('hover-'+shipObj.name), 400);
+            })
+        }
+    }
 
     // --------- Game Setup --------- 
 
     // Create board
     createBoard('Player');
     createBoard('Computer');    
+
+
+    // Store all the div elements of the player's board
+    const player_Board_Cells = Array.from(document.querySelector('#Player').children);
 
     // Create ship objects for game
     class Ship {
@@ -261,22 +217,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // rotate_Btn.addEventListener('click', rotate);
     rotate_Btn.addEventListener('click', rotate_Ship);
 
-
-    // -----------------------
-    
-
-
     // Logic for allowing players to drag ships and place them on their board   
     function onDragStart(event) {
         /* Function executed when user starts dragging ship */
 
         // Store information about which ship the player is dragging
         player_Dragged_Ship = event.target;
-        console.log(player_Dragged_Ship);
-
-        ship_Not_Dropped = false;
-        // ship_Not_Dropped = true;
-        cell_Not_Taken = false;
+      
+        isShip_Dropped = false;
     }
 
     function onDragOver(event) {
@@ -284,53 +232,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Override browser default behaviour for elements to allow dropping
         event.preventDefault();
+      
+        // Identify shipObj being dragged over
+        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
+
+        // Define the starting cell as the one we're dragging over
+        let start_Cell = Number(event.target.id);
+
+        // Highlight the area on the player's board
+        highlight_Ship_Placement(start_Cell, shipObj);
+
     }
-    
 
     function onDrop(event) {
         /* Target cell on which the ships will be placed */ 
 
         // Identify which cell the ship will be palced
         const player_Start_Loc = Number(event.target.id);
+        console.log("start id: " + player_Start_Loc);
 
-        // Identify the ship that's being dragged by the Player
-        const shipObj = ship_Arr[player_Dragged_Ship.id];
-
-        // Check to see if any ships are currently occupying cells on Player board
-        let is_Overlapping = false;
-        const board_Cells = Array.from(document.querySelector('#Player').children);
-
-        [valid_Move, cell_Not_Taken, cells_Covered] = check_Cells_Taken(ship_Angle === 0, player_Start_Loc, board_Cells, shipObj);
-        console.log(cell_Not_Taken);
-        
-        if(!valid_Move || !cell_Not_Taken) {
-            jSuites.notification({
-                error: 1,
-                name: 'Error message',
-                message: 'Ships cannot overlap',
-            })
-        }
-
-
-
-
-        player_Board_Cells.forEach(cell => {
-            cell.classList.remove(shipObj.name, 'taken');
-        });
+        // Place ship on player's board by first identifying the ship object
+        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
         
 
         // Player can now place their ships
-        place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
+        place_Ships_On_Board("Player", shipObj, player_Start_Loc);
+        
         
         // Once the ship has been dropped onto board cell, remove it from the DOM
-        if (!ship_Not_Dropped) {
+        if (!isShip_Dropped) {
             player_Dragged_Ship.remove();
         }
+
     }
-
-    const player_Board_Cells = Array.from(document.querySelector('#Player').children);
-
-
+  
     player_Board_Cells.forEach(cell => {
         cell.addEventListener('dragover', onDragOver);
         cell.addEventListener('drop', onDrop);
