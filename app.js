@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         game_Container.appendChild(gameBoardCont);
     }
 
-
     function create_Ship_Previews(shipObj, index) {
         /* Function dynamically creates previews of the ships */
         const ship = document.createElement('div');
@@ -63,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
             shipPreview.style.transform=`rotate(${ship_Angle}deg)`
         );
     }
-
 
     function check_Valid_Move(start_Cell, shipObj, board_Cells, is_Horizontal) {
         /* This function checks if the ship placement is valid or not */
@@ -110,14 +108,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
          return [cells_Covered, valid_Move, cell_Not_Taken];
     }
-
-
+  
     function place_Ships_On_Board(user_Board, shipObj, start_Loc) {
         /* Function randomly places ships on the computer board and provides logic to ensure the player places ships in valid positions */
 
         // Get nodeList of all the children contained in the element with id=Computer
         const board_Cells = Array.from(document.querySelector('#' + user_Board).children);
         // console.log(board_Cells);
+
         
         // DetRandomly determine if the position of the ship will be horizontal (ie. true)
         let is_Horizontal;
@@ -158,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-
     function highlight_Ship_Placement(start_Cell, shipObj) {
         /* Function will highlight the cell on player's board when ship is being placed via drag */
 
@@ -178,18 +175,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
-
-
-
-
-
-
     // --------- Game Setup --------- 
 
     // Create board
     createBoard('Player');
     createBoard('Computer');    
+
 
     // Store all the div elements of the player's board
     const player_Board_Cells = Array.from(document.querySelector('#Player').children);
@@ -226,14 +217,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // rotate_Btn.addEventListener('click', rotate);
     rotate_Btn.addEventListener('click', rotate_Ship);
 
-
     // Logic for allowing players to drag ships and place them on their board   
     function onDragStart(event) {
         /* Function executed when user starts dragging ship */
 
         // Store information about which ship the player is dragging
         player_Dragged_Ship = event.target;
-
+      
         isShip_Dropped = false;
     }
 
@@ -242,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Override browser default behaviour for elements to allow dropping
         event.preventDefault();
-
+      
         // Identify shipObj being dragged over
         const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
 
@@ -251,7 +241,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Highlight the area on the player's board
         highlight_Ship_Placement(start_Cell, shipObj);
-
 
     }
 
@@ -276,17 +265,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
     }
-
-
-    // Add the onDragOver and onDrop for each cell on the player's board
+  
     player_Board_Cells.forEach(cell => {
         cell.addEventListener('dragover', onDragOver);
         cell.addEventListener('drop', onDrop);
     })
-
-    
-
-    
 
 
 

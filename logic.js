@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Specify the start position of the shipObj
         let start_Cell = start_Loc >= 0 ? start_Loc : random_Ship_Start;
 
+
         // Check the validity of the ship placement
         const [cells_Covered, valid_Move, cell_Not_Taken] = check_Valid_Move(start_Cell, shipObj, board_Cells, is_Horizontal);
 
@@ -144,7 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 place_Ships_On_Board(user_Board, shipObj, undefined);
             }
             if(user_Board === "Player") {
-                isShip_Dropped = true;
+                // isShip_Dropped = true;
+                isShip_Dropped = false;
             }
             
         }
@@ -234,7 +236,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store information about which ship the player is dragging
         player_Dragged_Ship = event.target;
 
-        isShip_Dropped = false;
+        // isShip_Dropped = false;
+        isShip_Dropped = true;
     }
 
     function onDragOver(event) {
@@ -260,18 +263,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Identify which cell the ship will be palced
         const player_Start_Loc = Number(event.target.id);
-        console.log("start id: " + player_Start_Loc);
 
         // Place ship on player's board by first identifying the ship object
         const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
+
+        
+
+
+        // player_Board_Cells.forEach(cell => {
+        //     cell.classList.remove(shipObj.name, 'taken');
+        // });
         
 
         // Player can now place their ships
-        place_Ships_On_Board("Player", shipObj, player_Start_Loc);
-        
+        place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
         
         // Once the ship has been dropped onto board cell, remove it from the DOM
-        if (!isShip_Dropped) {
+        if (isShip_Dropped) {
             player_Dragged_Ship.remove();
         }
 
