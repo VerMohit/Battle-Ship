@@ -267,9 +267,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Place ship on player's board by first identifying the ship object
         const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
 
-        
-
-
         // player_Board_Cells.forEach(cell => {
         //     cell.classList.remove(shipObj.name, 'taken');
         // });
@@ -291,6 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
         cell.addEventListener('dragover', onDragOver);
         cell.addEventListener('drop', onDrop);
     })
+
+
+
+
+
 
     
 
