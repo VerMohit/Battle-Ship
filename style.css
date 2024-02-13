@@ -37,6 +37,13 @@
     font-size: 2rem;
 }
 
+.Player-hit-label, 
+.Player-miss-label, 
+.Computer-hit-label, 
+.Computer-miss-label {
+    margin: 1rem 0;
+}
+
 .gameBoard {
     display: grid;
     grid-template-columns: repeat(var(--no_cols), var(--sqr-size));
@@ -90,24 +97,24 @@
     height: 30px;
 }
 
-.carrier, .hover-carrier {
+.carrier {
     background-color: royalblue;
 }
 
-.battleship, .hover-battleship {
-    background-color: red;
+.battleship {
+    background-color: yellowgreen;
 }
 
-.destroyer, .hover-destroyer {
+.destroyer {
     background-color: green;
 }
 
-.submarine, .hover-submarine {
+.submarine {
     background-color: yellow;
 }
 
-.cruiser, .hover-cruiser {
-    background-color: grey;
+.cruiser {
+    background-color: orange;
 }
 
 .view-carrier {
@@ -127,6 +134,29 @@
     width: calc(1 * var(--sqr-size)) ;
 }
 
+/* This is for when the ship hover's over the player board */
+.hover-carrier {
+    border: 5px solid royalblue;
+}
+
+.hover-battleship {
+    /* background-color: red; */
+    border: 5px solid yellowgreen;
+}
+
+.hover-destroyer {
+    border: 5px solid green;
+}
+
+.hover-submarine {
+    /* background-color: yellow; */
+    border: 5px solid yellow;
+}
+
+.hover-cruiser {
+    /* background-color: orange; */
+    border: 5px solid orange;
+}
 
 
 /* Button setup */
@@ -143,17 +173,21 @@ button {
     cursor: pointer;
 }
 
-/* This is for when the ship hover's over the player board */
-/* .hover {
-    background-color: grey;
-} */
+
 
 /* Boom in vid */
-.hit {
+.strike {
     background-color: red;
 }
 
 /* empty in vid */
-.miss {
+.empty {
     background-color: grey;
+}
+
+
+
+
+#Player .hit-label {
+    background-color: black;
 }
