@@ -525,11 +525,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove the name of sunken ship from the users *_hit array (don't need to keep track of it anymore)
                 if(user === 'Player') {
                     player_Hits = hits_Arr.filter(ship_Name => ship_Name !== shipObj.name);
-                    info_Display.textContent = 'You sunk the Computer\'s ' + shipObj.name;  
+                    info_Display.textContent = `You sunk the Computer\'s ${shipObj.name}!`;  
                 }
                 else if(user === 'Computer') {
                     computer_Hits = hits_Arr.filter(ship_Name => ship_Name !== shipObj.name);
-                    info_Display.textContent = 'The Computer sunk your ' + shipObj.name;  
+                    info_Display.textContent = `The Computer sunk your ${shipObj.name}!`;  
                 }
 
                 // Append the ship name to the user's sunk_Ship_Arr
