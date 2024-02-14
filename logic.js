@@ -207,71 +207,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Logic for allowing players to drag ships and place them on their board   
-    function onDragStart(event) {
-        /* Function executed when user starts dragging ship */
+    function restart_Game() {
+        /* Function resets parameters for the game */
 
-        // Store information about which ship the player is dragging
-        player_Dragged_Ship = event.target;
-
-        // isShip_Dropped = false;
-        isShip_Dropped = true;
+        // Reset ship placement on player's board
+        player_Board_Cells.forEach(cell => {
+            cell.classList.remove('taken', 'carrier', 'battleship', 'destroyer', 'submarine', 'cruiser', 'hover-carrier', 'hover-battleship', 'hover-destroyer', 'hover-submarine', 'hover-cruiser', 'empty', 'strike');
+            cell.removeAttribute('data-selected');
+        });
+    
+        // Reset ship previews
+        ships_Container.textContent = '';
+        ship_Arr.forEach((ship, index) => create_Ship_Previews(ship, index));
+    
+        // Reset hit counters
+        player_hit_Counter = 0;
+        player_miss_Counter = 0;
+        computer_hit_Counter = 0;
+        computer_miss_Counter = 0;
+        document.querySelector('.Player-hit-counter').textContent = '0';
+        document.querySelector('.Player-miss-counter').textContent = '0';
+        document.querySelector('.Computer-hit-counter').textContent = '0';
+        document.querySelector('.Computer-miss-counter').textContent = '0';
+    
+        // Reset hit arrays and sunk ships arrays
+        player_Hits = [];
+        computer_Hits = [];
+    
+        // Reset game over status and player's turn
+        game_Over = false;
+        player_Turn = undefined;
+    
+        // Clear info and turn displays
+        info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!';
+        turn_Display.textContent = '';
     }
 
-    function onDragOver(event) {
-        /* Allows target container to receive drop events */ 
-
-        // Override browser default behaviour for elements to allow dropping
-        event.preventDefault();
-
-        // Identify shipObj being dragged over
-        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
-
-        // Define the starting cell as the one we're dragging over
-        let start_Cell = Number(event.target.id);
-
-        // Highlight the area on the player's board
-        highlight_Ship_Placement(start_Cell, shipObj);
-
-
-    }
-
-    function onDrop(event) {
-        /* Target cell on which the ships will be placed */ 
-
-        // Identify which cell the ship will be palced
-        const player_Start_Loc = Number(event.target.id);
-
-        // Place ship on player's board by first identifying the ship object
-        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
-
-        // player_Board_Cells.forEach(cell => {
-        //     cell.classList.remove(shipObj.name, 'taken');
-        // });
-        
-
-        // Player can now place their ships
-        place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
-        
-        // Once the ship has been dropped onto board cell, remove it from the DOM
-        if (isShip_Dropped) {
-            player_Dragged_Ship.remove();
-            no_Of_Ships = no_Of_Ships - 1;
-        }
-
-        // Give live feedback on how many ships remain to be placed
-        if(ships_Container.hasChildNodes()) {
-            info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!'
-            // no_Of_Ships = no_Of_Ships - 1;
-        }
-        else {
-            info_Display.textContent = 'Press START to begin playing!';
-        }
-
-
-    }
-
-    // Game Logic     
     function start_Game() {
         /* Function will be used to start the game */
 
@@ -431,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
 
-    function score_Check(user, hits_Arr, sunk_Ships_Arr) {
+    function score_Check(user, hits_Arr, sunk_Ships_Arr) {  
         /* Function keeps track of sunken ships and determines the winner */
 
         // Check to see if any ships has sunk
@@ -473,6 +444,70 @@ document.addEventListener('DOMContentLoaded', function() {
         }        
     }
 
+    // Logic for allowing players to drag ships and place them on their board   
+    function onDragStart(event) {
+        /* Function executed when user starts dragging ship */
+
+        // Store information about which ship the player is dragging
+        player_Dragged_Ship = event.target;
+
+        // isShip_Dropped = false;
+        isShip_Dropped = true;
+    }
+
+    function onDragOver(event) {
+        /* Allows target container to receive drop events */ 
+
+        // Override browser default behaviour for elements to allow dropping
+        event.preventDefault();
+
+        // Identify shipObj being dragged over
+        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
+
+        // Define the starting cell as the one we're dragging over
+        let start_Cell = Number(event.target.id);
+
+        // Highlight the area on the player's board
+        highlight_Ship_Placement(start_Cell, shipObj);
+
+
+    }
+
+    function onDrop(event) {
+        /* Target cell on which the ships will be placed */ 
+
+        // Identify which cell the ship will be palced
+        const player_Start_Loc = Number(event.target.id);
+
+        // Place ship on player's board by first identifying the ship object
+        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
+
+        // player_Board_Cells.forEach(cell => {
+        //     cell.classList.remove(shipObj.name, 'taken');
+        // });
+        
+
+        // Player can now place their ships
+        place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
+        
+        // Once the ship has been dropped onto board cell, remove it from the DOM
+        if (isShip_Dropped) {
+            player_Dragged_Ship.remove();
+            no_Of_Ships = no_Of_Ships - 1;
+        }
+
+        // Give live feedback on how many ships remain to be placed
+        if(ships_Container.hasChildNodes()) {
+            info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!'
+            // no_Of_Ships = no_Of_Ships - 1;
+        }
+        else {
+            info_Display.textContent = 'Press START to begin playing!';
+        }
+
+
+    }
+
 
 
     // --------- Game Setup --------- 
@@ -507,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];   
 
     // Initialize randomized ship placement on Computer Board
-    // Passing undefined as start_Loc as 
+    // Passing undefined as start_Loc
     ship_Arr.forEach((shipObj) => place_Ships_On_Board("Computer", shipObj, undefined));
 
     // Create ships for previewing
@@ -523,5 +558,5 @@ document.addEventListener('DOMContentLoaded', function() {
     start_Btn.addEventListener('click', start_Game);
 
     // Button logic for restarting the game
-    // restart_Btn.addEventListener('click', start_Game);
+    restart_Btn.addEventListener('click', restart_Game);
 });
