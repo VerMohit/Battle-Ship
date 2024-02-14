@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let computer_Hits = [];           // list of ship name computer hit
     let game_Over = false;            // Boolean tracks if game is over
     let player_Turn;                  // Boolean tracks player turn: true = human; false = computer
+    let player_Timeout;
+    let computer_Timeout;
+    let turn_Change_Timeout;
     const player_Sunk_Ships = [];     // list of all ships the player has sunken
     const computer_Sunk_Ships = [];     // list of all ships the computer has sunken
     const boardCols = 10;
@@ -24,12 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const ships_Container = document.querySelector('.ships-container');    
     const info_Display = document.querySelector('.info');
     const turn_Display = document.querySelector('.turn');
+
+    let gameBoardCont;
     
     // --------- Functions ---------
     function createBoard(user) {
         /* Function used to create new player and computer boards */
 
-        const gameBoardCont = document.createElement('div');
+        // const gameBoardCont = document.createElement('div');
+        gameBoardCont = document.createElement('div');
+        gameBoardCont.id = user + '-gameBoard';
         
         const userTitle = document.createElement('p');
         userTitle.textContent = user;
@@ -50,6 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
         span_miss.textContent = '0'
         span_miss.classList.add(user + '-miss-counter');
         miss.appendChild(span_miss);
+
+        const hit_Miss_Cont = document.createElement('div');
+        hit_Miss_Cont.classList.add('hit_Miss_Cont');
+        hit_Miss_Cont.appendChild(hit);
+        hit_Miss_Cont.appendChild(miss);
 
         userTitle.textContent = user;
         userTitle.classList.add('boardTitle');
@@ -72,8 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         gameBoardCont.appendChild(userTitle);
-        gameBoardCont.appendChild(hit);
-        gameBoardCont.appendChild(miss);
+        // gameBoardCont.appendChild(hit);
+        // gameBoardCont.appendChild(miss);
+        gameBoardCont.appendChild(hit_Miss_Cont);
         gameBoardCont.appendChild(gameBoard);
         game_Container.appendChild(gameBoardCont);
     }
@@ -188,14 +201,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }       
     }
 
-    function highlight_Ship_Placement(start_Cell, shipObj) {
+    function highlight_Ship_Placement(start_Cell, shipObj, player_Board_Cells) {
         /* Function will highlight the cell on player's board when ship is being placed via drag */
+
+        // add input for playerboardcells
 
         // Check if horizontal
         let is_Horizontal = ship_Angle === 0;
 
         // Check validity of the ship placement on player's board
         const [cells_Covered, valid_Move, cell_Not_Taken] = check_Valid_Move(start_Cell, shipObj, player_Board_Cells, is_Horizontal);
+
+        console.log(valid_Move, cell_Not_Taken)
 
         // If ship placement is valid and cells aren't taken, highlight cells
         if(valid_Move && cell_Not_Taken) {
@@ -207,19 +224,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+    function addDragDropListeners (player_Board_Cells) {
+        player_Board_Cells.forEach(cell => {
+            cell.addEventListener('dragover', onDragOver);
+            cell.addEventListener('drop', onDrop);
+        })
+    }
+
     function restart_Game() {
         /* Function resets parameters for the game */
 
-        // Reset ship placement on player's board
-        player_Board_Cells.forEach(cell => {
-            cell.classList.remove('taken', 'carrier', 'battleship', 'destroyer', 'submarine', 'cruiser', 'hover-carrier', 'hover-battleship', 'hover-destroyer', 'hover-submarine', 'hover-cruiser', 'empty', 'strike');
-            cell.removeAttribute('data-selected');
-        });
-    
-        // Reset ship previews
-        ships_Container.textContent = '';
-        ship_Arr.forEach((ship, index) => create_Ship_Previews(ship, index));
-    
+        // Remove the timeouts
+        clearTimeout(player_Timeout);
+        clearTimeout(computer_Timeout);
+        clearTimeout(turn_Change_Timeout);
+       
+        // Remove the current boards
+        const player_gameBoard = document.querySelector('#Player-gameBoard')
+        const computer_gameBoardConts = document.querySelector('#Computer-gameBoard')
+        player_gameBoard.remove()
+        computer_gameBoardConts.remove()
+
+        // Create new boards
+        createBoard('Player');
+        createBoard('Computer');   
+
+        // Reset ship angle
+        ship_Angle = 0
+
         // Reset hit counters
         player_hit_Counter = 0;
         player_miss_Counter = 0;
@@ -229,7 +262,22 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.Player-miss-counter').textContent = '0';
         document.querySelector('.Computer-hit-counter').textContent = '0';
         document.querySelector('.Computer-miss-counter').textContent = '0';
+        
+        // Initialize randomized ship placement on Computer Board
+        ship_Arr.forEach((shipObj) => place_Ships_On_Board("Computer", shipObj, undefined));
+
+        // Reset ship previews
+        ships_Container.textContent = '';
+        ship_Arr.forEach((ship, index) => create_Ship_Previews(ship, index));
+
+        // Reset the counter that displays how many ships are in the container
+        no_Of_Ships = ships_Container.children.length
+        info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!'
     
+        // Add onDrag and onDrop event listener to each cell of the new board
+        const player_Board_Cells = Array.from(document.querySelector('#Player').children);
+        addDragDropListeners(player_Board_Cells);
+     
         // Reset hit arrays and sunk ships arrays
         player_Hits = [];
         computer_Hits = [];
@@ -240,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Clear info and turn displays
         info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!';
-        turn_Display.textContent = '';
+        turn_Display.textContent = '';        
     }
 
     function start_Game() {
@@ -328,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             // Specify how long the computer waits before its turn
-            setTimeout(computers_Move, 3000);
+            player_Timeout = setTimeout(computers_Move, 3000);
         }       
     }    
 
@@ -341,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Set computer to make its move after some time
-        setTimeout(() => {
+        computer_Timeout = setTimeout(() => {
 
             // Randomly choose number b/w 0 to (boardSqaures - 1), inclusively
             let comp_Chosen_Cell = Math.floor(Math.random() * boardSquares);
@@ -385,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         // After a certain time, change the turn back to the Player
-        setTimeout(() => { 
+        turn_Change_Timeout = setTimeout(() => { 
         
             player_Turn = true;
 
@@ -467,11 +515,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Define the starting cell as the one we're dragging over
         let start_Cell = Number(event.target.id);
 
+        const player_Board_Cells = Array.from(document.querySelector('#Player').children);
+
         // Highlight the area on the player's board
-        highlight_Ship_Placement(start_Cell, shipObj);
-
-
+        highlight_Ship_Placement(start_Cell, shipObj, player_Board_Cells);
     }
+
 
     function onDrop(event) {
         /* Target cell on which the ships will be placed */ 
@@ -480,12 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const player_Start_Loc = Number(event.target.id);
 
         // Place ship on player's board by first identifying the ship object
-        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];
-
-        // player_Board_Cells.forEach(cell => {
-        //     cell.classList.remove(shipObj.name, 'taken');
-        // });
-        
+        const shipObj = ship_Arr[Number(player_Dragged_Ship.id)];        
 
         // Player can now place their ships
         place_Ships_On_Board("Player", shipObj, player_Start_Loc);        
@@ -499,7 +543,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Give live feedback on how many ships remain to be placed
         if(ships_Container.hasChildNodes()) {
             info_Display.textContent = 'Place the remaining ' + no_Of_Ships + ' pieces on the board before playing!'
-            // no_Of_Ships = no_Of_Ships - 1;
         }
         else {
             info_Display.textContent = 'Press START to begin playing!';
@@ -511,7 +554,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // --------- Game Setup --------- 
-
     // Create board
     createBoard('Player');
     createBoard('Computer');    
@@ -520,10 +562,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const player_Board_Cells = Array.from(document.querySelector('#Player').children);
 
     // Add the onDragOver and onDrop for each cell on the player's board
-    player_Board_Cells.forEach(cell => {
-        cell.addEventListener('dragover', onDragOver);
-        cell.addEventListener('drop', onDrop);
-    })
+    addDragDropListeners (player_Board_Cells);
+    // player_Board_Cells.forEach(cell => {
+    //     cell.addEventListener('dragover', onDragOver);
+    //     cell.addEventListener('drop', onDrop);
+    // })
+    
 
     // Create ship objects for game
     class Ship {
