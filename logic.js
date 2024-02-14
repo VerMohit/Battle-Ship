@@ -61,11 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (let ii = 0; ii < boardSquares; ii++) {  
             const cell = document.createElement('div');     
-            // const circle = document.createElement('div');
+            const circle = document.createElement('div');
 
-            // circle.classList.add('circle');   
-            // circle.id = ii;
-            // cell.appendChild(circle)
+            circle.classList.add('circle');   
+            circle.id = ii;
+            cell.appendChild(circle)
             cell.classList.add('cell');
             cell.id = ii;
             gameBoard.appendChild(cell);
