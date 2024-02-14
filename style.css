@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
 }
 
 /* END RESET */
@@ -12,6 +13,7 @@
     --sqr-size: 50px;
     --no_cols: 10;
     --no_rows: 10;
+    --font-size-general: 1.5rem;
 }
 
 .main {
@@ -31,17 +33,26 @@
 }
 
 .boardTitle {
-    font-weight: 900;
+    font-weight: 500;
     text-align: center;
     padding: 0.5rem 0;
     font-size: 2rem;
+}
+
+.hit_Miss_Cont {
+    background-color: aquamarine;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
 }
 
 .Player-hit-label, 
 .Player-miss-label, 
 .Computer-hit-label, 
 .Computer-miss-label {
-    margin: 1rem 0;
+    /* margin: 1rem 0; */
+    /* margin-inline-start: 5rem; */
+    font-size: var(--font-size-general);
 }
 
 .gameBoard {
@@ -63,6 +74,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .cell:hover {
@@ -117,9 +129,12 @@
     background-color: orange;
 }
 
+.view-carrier, .view-battleship, .view-destroyer, .view-submarine, .view-cruiser {
+    cursor: pointer;
+}
+
 .view-carrier {
-    width: calc(3 * var(--sqr-size)) ;
-    
+    width: calc(3 * var(--sqr-size)) ;    
 }
 
 .view-battleship {
@@ -168,7 +183,7 @@
 }
 
 button {
-    font-size: 1.5rem;
+    font-size: var(--font-size-general);
     padding: 0.5rem 1rem;
     cursor: pointer;
 }
@@ -187,7 +202,3 @@ button {
 
 
 
-
-#Player .hit-label {
-    background-color: black;
-}
