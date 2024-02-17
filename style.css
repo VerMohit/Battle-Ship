@@ -1,3 +1,10 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Honk&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+
 /* RESET */
 
 * {
@@ -9,19 +16,30 @@
 
 /* END RESET */
 
+
+
 :root {
-    --sqr-size: 50px;
+    --sqr-size: 60px;
     --no_cols: 10;
     --no_rows: 10;
     --font-size-general: 1.5rem;
+    --font-Honk: 'Honk', Arial, 'Segoe UI', Helvetica, sans-serif;
+    --font-Roboto: 'Roboto', Arial, 'Segoe UI', Helvetica, sans-serif;
 }
 
 .main {
-    padding-inline: 10rem;
+    padding-inline: 8rem;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .game-info {
     background-color: yellow;
+}
+
+h1 {
+    font-family: var(--font-Honk);
+    font-size: 7rem;
+    text-align: center;
 }
 
 /* Board Setup */
@@ -36,7 +54,8 @@
     font-weight: 500;
     text-align: center;
     padding: 0.5rem 0;
-    font-size: 2rem;
+    font-size: 4rem;
+    font-family: var(--font-Honk);
 }
 
 .hit_Miss_Cont {
@@ -44,15 +63,21 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-evenly;
+    font-family: var(--font-Honk);
+    font-size: var(--font-size-general);
 }
 
 .Player-hit-label, 
 .Player-miss-label, 
 .Computer-hit-label, 
 .Computer-miss-label {
-    /* margin: 1rem 0; */
-    /* margin-inline-start: 5rem; */
+    font-size: 2.5rem;
+}
+
+.text {
     font-size: var(--font-size-general);
+    font-family: var(--font-Roboto);
+    font-weight: 400;
 }
 
 .gameBoard {
@@ -81,6 +106,26 @@
     border-color: yellow;
 }
 
+
+.Player-info, .Computer-info {
+    min-height: 150px;
+    max-height: 150px;
+    background-color: aliceblue;
+    overflow-y: auto;
+    border-radius: 20px;
+    margin-top: 1rem;
+}
+
+/* .info-title {
+    padding: 1rem 0 0.5rem 0;
+} */
+
+.info_Move {
+    border-bottom: 1px solid black;
+    padding: 0.5rem 1.5rem;
+}
+
+
 /* END of Board Setup */
 
 /* Setup the options container */
@@ -98,16 +143,20 @@
     background-color: aquamarine;
     display: flex;
     gap: 1rem;
-    justify-content: center;
+
+
+    /* justify-content: center; */
     align-items: center;
     padding: 2rem;
-    /* width: calc(var(--sqr-size) * var(--no_cols)); */
+    width: 700px;
+
 }
 
 .ships-container div {
     border-radius: 20px;
     height: 30px;
 }
+
 
 .carrier {
     background-color: royalblue;
@@ -155,7 +204,6 @@
 }
 
 .hover-battleship {
-    /* background-color: red; */
     border: 5px solid yellowgreen;
 }
 
@@ -174,30 +222,49 @@
 }
 
 
+#Computer .carrier,
+#Computer .battleship,
+#Computer .destroyer,
+#Computer .submarine,
+#Computer .cruiser {
+    background-color: transparent;
+}
+
+
 /* Button setup */
 .btn-container {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
     gap: 0.5rem;
+
 }
 
 button {
-    font-size: var(--font-size-general);
+    /* font-size: var(--font-size-general); */
+    /* font-size: var(--font-size-general); */
+    font-size: 2rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
+    font-family: var(--font-Honk);
+    /* background-color: whitesmoke; */
+    border-radius: 50px;
+}
+
+.start {
+    background-color: #D0EBFF;
 }
 
 
 
 /* Boom in vid */
 .strike {
-    background-color: red;
+    background-color: red !important;
 }
 
 /* empty in vid */
 .empty {
-    background-color: grey;
+    background-color: grey !important;
 }
 
 

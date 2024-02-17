@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const boardRows = 10;
     const boardSquares = boardCols * boardRows;
     const game_Container = document.querySelector('.game-container');
+    // const game_Info = document.querySelector('.game-info');
     const rotate_Btn = document.querySelector('.rotate');
     const start_Btn = document.querySelector('.start');
     const restart_Btn = document.querySelector('.restart');
@@ -83,12 +84,33 @@ document.addEventListener('DOMContentLoaded', function() {
             gameBoard.appendChild(cell);
         }
 
+        
+        const info_Cont = document.createElement('div');
+        const info_Title = document.createElement('p');
+        // info_Title.textContent = user + ' Info: ';
+        // info_Title.classList.add('info-title', 'text')
+        const info_Move = document.createElement('div');
+        info_Move.classList.add(user + '-info', 'text');
+        // info_Cont.appendChild(info_Title);
+        info_Cont.appendChild(info_Move);
+
+
+
         gameBoardCont.appendChild(userTitle);
         // gameBoardCont.appendChild(hit);
         // gameBoardCont.appendChild(miss);
         gameBoardCont.appendChild(hit_Miss_Cont);
         gameBoardCont.appendChild(gameBoard);
+        gameBoardCont.appendChild(info_Cont);
         game_Container.appendChild(gameBoardCont);
+
+
+    // // Auto-scrolling function using MutationObserver
+    // const observer = new MutationObserver(() => {
+    //     info_Cont.scrollTop = info_Cont.scrollHeight;
+    // });
+
+    // observer.observe(info_Cont, { childList: true });
     }
 
     function create_Ship_Previews(shipObj, index) {
@@ -333,6 +355,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.target.setAttribute('data-selected', 'true');
             }
 
+            const player_Info = document.querySelector('.Player-info');
+            const info_Move = document.createElement('div');
+            info_Move.classList.add('info_Move');
+
             // What to do when a ship is hit
             if(event.target.classList.contains('taken')) {
                 const cell = event.target.classList
@@ -350,7 +376,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 player_Hits.push(...filtered_Class);
                 console.log(player_Hits)
 
-                info_Display.textContent='Nice, you hit the computer\'s ' + filtered_Class + '!';
+                // info_Display.textContent='Nice, you hit the computer\'s ' + filtered_Class + '!';
+
+                // const player_Info = document.querySelector('.Player-info');
+                // const info_Move = document.createElement('div');
+                // info_Move.classList.add('info_Move')
+                info_Move.textContent = 'Nice, you hit the computer\'s ' + filtered_Class + '!';
+                player_Info.appendChild(info_Move);
+
                 document.querySelector('.Player-hit-counter').textContent = player_hit_Counter;
 
                 // Check if the player's score
@@ -363,7 +396,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 event.target.classList.add('empty');
                 player_miss_Counter += 1;
 
-                info_Display.textContent='Looks like you missed!';
+                // info_Display.textContent='Looks like you missed!';
+
+                info_Move.textContent = 'Looks like you missed!';
+                player_Info.appendChild(info_Move);
+
                 document.querySelector('.Player-miss-counter').textContent = player_miss_Counter;
             }
 
@@ -395,10 +432,11 @@ document.addEventListener('DOMContentLoaded', function() {
             let comp_Chosen_Cell = Math.floor(Math.random() * boardSquares);
 
             // Store the classList information
+            const player_Board_Cells = Array.from(document.querySelector('#Player').children);
             const cell = player_Board_Cells[comp_Chosen_Cell].classList;
             
             // Let computer redo move it square has already been chosen
-            if(cell.contains('taken') && cell.contains('strike')) {
+            if(cell.contains('taken') && cell.contains('strike') || cell.contains('empty')) {
                 computers_Move();
                 return;
             }
@@ -415,7 +453,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 computer_Hits.push(...filtered_Class);
                 // console.log(computer_Hits)
 
-                info_Display.textContent='The computer hit your ' + filtered_Class + '!';
+                // info_Display.textContent='The computer hit your ' + filtered_Class + '!';
+
+                const computer_Info = document.querySelector('.Computer-info');
+                const info_Move = document.createElement('div');
+                info_Move.classList.add('info_Move');
+                info_Move.textContent='The computer hit your ' + filtered_Class + '!';
+                computer_Info.appendChild(info_Move);
+
                 document.querySelector('.Computer-hit-counter').textContent = computer_hit_Counter;
 
                 // Check if the computer's score
@@ -425,7 +470,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 cell.add('empty');
                 computer_miss_Counter += 1;
 
-                info_Display.textContent='The computer missed!';
+                // info_Display.textContent='The computer missed!';
+
+                const computer_Info = document.querySelector('.Computer-info');
+                const info_Move = document.createElement('div');
+                info_Move.classList.add('info_Move');
+                info_Move.textContent='The computer missed!' + ' ' + player_Board_Cells[comp_Chosen_Cell].id;
+                computer_Info.appendChild(info_Move);
+
+
                 document.querySelector('.Computer-miss-counter').textContent = computer_miss_Counter;
             }
 
@@ -456,16 +509,34 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check to see if any ships has sunk
         ship_Arr.forEach(shipObj => {
             // Check if we have same number of the ship name as its length; if so, its sunk
-            if(hits_Arr.filter(ship_Name => ship_Name === shipObj.name).length === shipObj.length) {                      
+            if(hits_Arr.filter(ship_Name => ship_Name === shipObj.name).length === shipObj.length) {      
+                
+
 
                 // Remove the name of sunken ship from the users *_hit array (don't need to keep track of it anymore)
                 if(user === 'Player') {
                     player_Hits = hits_Arr.filter(ship_Name => ship_Name !== shipObj.name);
-                    info_Display.textContent = `You sunk the Computer\'s ${shipObj.name}!`;  
+                    // info_Display.textContent = `You sunk the Computer\'s ${shipObj.name}!`;  
+
+                    const player_Info = document.querySelector('.Player-info');
+                    const info_Move = document.createElement('div');
+                    info_Move.classList.add('info_Move');
+                    info_Move.textContent=`** You sunk the Computer\'s ${shipObj.name}! **`;
+                    player_Info.appendChild(info_Move);
                 }
                 else if(user === 'Computer') {
+
+
+
                     computer_Hits = hits_Arr.filter(ship_Name => ship_Name !== shipObj.name);
-                    info_Display.textContent = `The Computer sunk your ${shipObj.name}!`;  
+
+                    const computer_Info = document.querySelector('.Computer-info');
+                    const info_Move = document.createElement('div');
+                    info_Move.classList.add('info_Move');
+                    info_Move.textContent=`** Ahhh Computer sunk your ${shipObj.name}! **`;
+                    computer_Info.appendChild(info_Move);
+
+                    // info_Display.textContent = `The Computer sunk your ${shipObj.name}!`;  
                 }
 
                 // Append the ship name to the user's sunk_Ship_Arr
@@ -563,10 +634,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add the onDragOver and onDrop for each cell on the player's board
     addDragDropListeners (player_Board_Cells);
-    // player_Board_Cells.forEach(cell => {
-    //     cell.addEventListener('dragover', onDragOver);
-    //     cell.addEventListener('drop', onDrop);
-    // })
     
 
     // Create ship objects for game
