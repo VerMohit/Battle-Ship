@@ -8,45 +8,19 @@
     <script src="logic.js"></script>
     <!-- <script src="app.js"></script> -->
 
-    <script src="https://jsuites.net/v4/jsuites.js"></script>
-    <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
-
-    <script>
-        function allowDrop(ev) {
-          ev.preventDefault();
-        }
-        
-        function drag(ev) {
-          ev.dataTransfer.setData("text", ev.target.id);
-          ev.dataTransfer.dropEffect = "copy";
-        }
-        
-        function drop(ev) {
-          ev.preventDefault();
-          var data = ev.dataTransfer.getData("text");
-          ev.target.appendChild(document.getElementById(data));
-        }
-        </script>
 </head>
 <body>
 
     <div class="main">
+        <h1>Battleship</h1>
         <div class="game-info">
-            <p>Turn: <span class="turn"></span></p>
-            <p>Info: <span class="info"></span></p>
+            <p class="text">Turn: <span class="turn"></span></p>
+            <p class="text" style="padding-top: 1rem;">Info: <span class="info"></span></p>
         </div>
     
         <div id="game-container" class="game-container"></div>
         
         <div class="options">
-            <!-- <div class="ships-container">
-                <div class="view-carrier carrier" draggable="true"></div>
-                <div class="view-battleship battleship" draggable="true"></div>
-                <div class="view-destroyer destroyer" draggable="true"></div>
-                <div class="view-submarine submarine" draggable="true"></div>
-                <div class="view-cruiser cruiser" draggable="true"></div>        
-            </div> -->
-
             <div class="ships-container"></div>
 
             <div class="btn-container">
