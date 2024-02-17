@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const start_Btn = document.querySelector('.start');
     const restart_Btn = document.querySelector('.restart');
     const ships_Container = document.querySelector('.ships-container');    
+    const btn_container = document.querySelector('.btn-container');    
     const info_Display = document.querySelector('.info');
     const turn_Display = document.querySelector('.turn');
 
@@ -74,11 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (let ii = 0; ii < boardSquares; ii++) {  
             const cell = document.createElement('div');     
-            const circle = document.createElement('div');
-
-            circle.classList.add('circle');   
-            circle.id = ii;
-            cell.appendChild(circle)
             cell.classList.add('cell');
             cell.id = ii;
             gameBoard.appendChild(cell);
@@ -87,14 +83,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const info_Cont = document.createElement('div');
         const info_Title = document.createElement('p');
-        // info_Title.textContent = user + ' Info: ';
-        // info_Title.classList.add('info-title', 'text')
         const info_Move = document.createElement('div');
         info_Move.classList.add(user + '-info', 'text');
         // info_Cont.appendChild(info_Title);
         info_Cont.appendChild(info_Move);
-
-
 
         gameBoardCont.appendChild(userTitle);
         // gameBoardCont.appendChild(hit);
@@ -299,6 +291,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add onDrag and onDrop event listener to each cell of the new board
         const player_Board_Cells = Array.from(document.querySelector('#Player').children);
         addDragDropListeners(player_Board_Cells);
+
+
+        start_Btn.style.backgroundColor = 'whitesmoke';
      
         // Reset hit arrays and sunk ships arrays
         player_Hits = [];
@@ -617,6 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else {
             info_Display.textContent = 'Press START to begin playing!';
+            start_Btn.style.backgroundColor = '#D0EBFF';
         }
 
 
@@ -650,7 +646,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const submarine = new Ship('submarine', 3);
     const cruiser = new Ship('cruiser', 2);
 
-    const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];   
+    // const ship_Arr = [carrier, battleship, destroyer, submarine, cruiser];   
+    const ship_Arr = [cruiser, submarine,  destroyer, battleship, carrier];   
 
     // Initialize randomized ship placement on Computer Board
     // Passing undefined as start_Loc

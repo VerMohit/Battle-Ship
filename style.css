@@ -1,6 +1,5 @@
 /* FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Honk&display=swap');
-
 @import url('https://fonts.googleapis.com/css2?family=Honk&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 
@@ -19,7 +18,7 @@
 
 
 :root {
-    --sqr-size: 60px;
+    --sqr-size: 50px;
     --no_cols: 10;
     --no_rows: 10;
     --font-size-general: 1.5rem;
@@ -38,7 +37,7 @@
 
 h1 {
     font-family: var(--font-Honk);
-    font-size: 7rem;
+    font-size: 5rem;
     text-align: center;
 }
 
@@ -48,7 +47,12 @@ h1 {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
+    /* justify-content: center; */
 }
+
+/* #Player-gameBoard {
+    margin-right: 5rem;
+} */
 
 .boardTitle {
     font-weight: 500;
@@ -86,6 +90,10 @@ h1 {
     grid-template-rows: repeat(var(--no_rows), var(--sqr-size));
     width: min-content;
 }
+
+/* #Player-gameBoard {
+    margin-right: 7rem;
+} */
 
 .circle {
     width: calc(var(--sqr-size) / 3);
@@ -132,7 +140,7 @@ h1 {
 .options {
     background-color: azure;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column nowrap;
     gap: 2rem;
     padding-top: 2rem;
 }
@@ -142,13 +150,19 @@ h1 {
 .ships-container {
     background-color: aquamarine;
     display: flex;
-    gap: 1rem;
+    row-gap: 6rem;
+    flex-flow: column nowrap;
 
+    /* display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    row-gap: 6rem;
+    column-gap: 2rem; */
 
     /* justify-content: center; */
     align-items: center;
     padding: 2rem;
-    width: 700px;
+    /* width: 400px; */
 
 }
 
@@ -183,19 +197,23 @@ h1 {
 }
 
 .view-carrier {
-    width: calc(3 * var(--sqr-size)) ;    
+    /* width: calc(3 * var(--sqr-size)) ;     */
+    width: calc(2.25 * var(--sqr-size)) ;    
 }
 
 .view-battleship {
-    width: calc(2 * var(--sqr-size)) ;
+    /* width: calc(2 * var(--sqr-size)) ; */
+    width: calc(1.25 * var(--sqr-size)) ;
 }
 
 .view-destroyer, .view-submarine {
-    width: calc(1.5 * var(--sqr-size)) ;
+    /* width: calc(1.5 * var(--sqr-size)) ; */
+    width: calc(1 * var(--sqr-size)) ;
 }
 
 .view-cruiser {
-    width: calc(1 * var(--sqr-size)) ;
+    /* width: calc(1 * var(--sqr-size)) ; */
+    width: calc(0.75 * var(--sqr-size)) ;
 }
 
 /* This is for when the ship hover's over the player board */
@@ -234,7 +252,7 @@ h1 {
 /* Button setup */
 .btn-container {
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     justify-content: center;
     gap: 0.5rem;
 
@@ -247,12 +265,14 @@ button {
     padding: 0.5rem 1rem;
     cursor: pointer;
     font-family: var(--font-Honk);
-    /* background-color: whitesmoke; */
+    background-color: whitesmoke;
     border-radius: 50px;
+    width: 200px;
 }
 
-.start {
-    background-color: #D0EBFF;
+.start, .restart {
+    /* background-color: #D0EBFF; */
+    margin-inline: 5rem;
 }
 
 
