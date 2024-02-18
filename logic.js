@@ -15,18 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
     let player_Timeout;
     let computer_Timeout;
     let turn_Change_Timeout;
+    let start_Btn;
+    let restart_Btn;
     const player_Sunk_Ships = [];     // list of all ships the player has sunken
     const computer_Sunk_Ships = [];     // list of all ships the computer has sunken
     const boardCols = 10;
     const boardRows = 10;
     const boardSquares = boardCols * boardRows;
     const game_Container = document.querySelector('.game-container');
-    // const game_Info = document.querySelector('.game-info');
+    // const player_GameBoard = document.querySelector('.Player-gameBoard');
+    // const computer_GameBoard = document.querySelector('.Computer-gameBoard');
     const rotate_Btn = document.querySelector('.rotate');
-    const start_Btn = document.querySelector('.start');
-    const restart_Btn = document.querySelector('.restart');
+    // const start_Btn = document.querySelector('.start');
+    // const restart_Btn = document.querySelector('.restart');
     const ships_Container = document.querySelector('.ships-container');    
-    const btn_container = document.querySelector('.btn-container');    
+    // const btn_container = document.querySelector('.btn-container');    
     const info_Display = document.querySelector('.info');
     const turn_Display = document.querySelector('.turn');
 
@@ -79,10 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
             cell.id = ii;
             gameBoard.appendChild(cell);
         }
-
         
         const info_Cont = document.createElement('div');
-        const info_Title = document.createElement('p');
+        // const info_Title = document.createElement('p');
         const info_Move = document.createElement('div');
         info_Move.classList.add(user + '-info', 'text');
         // info_Cont.appendChild(info_Title);
@@ -94,15 +96,31 @@ document.addEventListener('DOMContentLoaded', function() {
         gameBoardCont.appendChild(hit_Miss_Cont);
         gameBoardCont.appendChild(gameBoard);
         gameBoardCont.appendChild(info_Cont);
+        
         game_Container.appendChild(gameBoardCont);
 
+    }
 
-    // // Auto-scrolling function using MutationObserver
-    // const observer = new MutationObserver(() => {
-    //     info_Cont.scrollTop = info_Cont.scrollHeight;
-    // });
+    function create_Start_NewGame_Btns() {
 
-    // observer.observe(info_Cont, { childList: true });
+        const btn_container = document.createElement('div');
+        btn_container.classList.add('btn-container');  
+
+        const start_Btn = document.createElement('button');
+        start_Btn.textContent = 'Start';
+        start_Btn.classList.add('start');
+        start_Btn.addEventListener('click', start_Game);
+        btn_container.append(start_Btn);
+
+
+        const restart_Btn = document.createElement('button');
+        restart_Btn.textContent = 'New Game';
+        restart_Btn.classList.add('restart');
+        restart_Btn.addEventListener('click', restart_Game);
+        btn_container.append(restart_Btn);
+
+        game_Container.appendChild(btn_container);
+
     }
 
     function create_Ship_Previews(shipObj, index) {
@@ -249,6 +267,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function restart_Game() {
         /* Function resets parameters for the game */
 
+        // location.reload();
+
         // Remove the timeouts
         clearTimeout(player_Timeout);
         clearTimeout(computer_Timeout);
@@ -257,12 +277,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove the current boards
         const player_gameBoard = document.querySelector('#Player-gameBoard')
         const computer_gameBoardConts = document.querySelector('#Computer-gameBoard')
+        
         player_gameBoard.remove()
         computer_gameBoardConts.remove()
+        restart_Btn.remove();
+        start_Btn.remove();
+
+        game_Container.textContent='';
+
+        
 
         // Create new boards
         createBoard('Player');
-        createBoard('Computer');   
+        create_Start_NewGame_Btns();
+        start_Btn = document.querySelector('.start');
+        restart_Btn = document.querySelector('.restart');
+        createBoard('Computer');    
 
         // Reset ship angle
         ship_Angle = 0
@@ -623,6 +653,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --------- Game Setup --------- 
     // Create board
     createBoard('Player');
+    create_Start_NewGame_Btns();
+    start_Btn = document.querySelector('.start');
+    restart_Btn = document.querySelector('.restart');
     createBoard('Computer');    
 
     // Store all the div elements of the player's board
